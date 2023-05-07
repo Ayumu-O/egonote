@@ -20,7 +20,7 @@ Parameters:
     Default: fuga
 
 Resources:
-  HelloWorldFunction:
+  ApiHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: hello_world/
@@ -34,11 +34,11 @@ Resources:
           LINE_CHANNEL_ACCESS_TOKEN: !Ref LineChannelAccessToken
           LINE_CHANNEL_SECRET: !Ref LineChannelSecret
       Events:
-        HelloWorld:
+        API:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /api_endpoint
-            Method: get
+            Method: post
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -47,9 +47,9 @@ Outputs:
   ApiEndpointURL:
     Description: "API Gateway endpoint URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api_endpoint/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  ApiHandlerFunction:
+    Description: "API Handler Function ARN"
+    Value: !GetAtt ApiHandlerFunction.Arn
+  ApiHandlerFunctionIamRole:
+    Description: "Implicit IAM Role created for API Handler Function"
+    Value: !GetAtt ApiHandlerFunctionRole.Arn
