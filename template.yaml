@@ -40,6 +40,24 @@ Resources:
             Path: /api_endpoint
             Method: post
 
+  NotifyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: notify/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          LINE_CHANNEL_ACCESS_TOKEN: !Ref LineChannelAccessToken
+          LINE_CHANNEL_SECRET: !Ref LineChannelSecret
+      Events:
+        NotifyLine:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 0 * * ? *) # 日本時間AM9時に毎日通知する
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -53,3 +71,9 @@ Outputs:
   ApiHandlerFunctionIamRole:
     Description: "Implicit IAM Role created for API Handler Function"
     Value: !GetAtt ApiHandlerFunctionRole.Arn
+  NotifyFunctionArn:
+    Description: "Notify Function ARN"
+    Value: !GetAtt NotifyFunction.Arn
+  NotifyFunctionIamRole:
+    Description: "Implicit IAM Role created for Notify Function"
+    Value: !GetAtt NotifyFunctionRole.Arn
