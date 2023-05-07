@@ -21,5 +21,13 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
-      - run: sam build --use-container
-      - run: sam deploy
+      - run: >
+          sam build --use-container
+          --parameter-overrides
+          LineChannelAccessToken=${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LineChannelSecret=${{ secrets.LINE_CHANNEL_SECRET }}
+      - run: >
+          sam deploy
+          --parameter-overrides
+          LineChannelAccessToken=${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LineChannelSecret=${{ secrets.LINE_CHANNEL_SECRET }}

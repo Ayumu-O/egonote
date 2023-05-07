@@ -1,42 +1,34 @@
-import json
+import os
 
-# import requests
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,
+)
+
+handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
+line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
 
 
 def lambda_handler(event, context):
-    """Sample pure Lambda function
+    headers = event["headers"]
+    body = event["body"]
 
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
+    # get X-Line-Signature header value
+    signature = headers['x-line-signature']
 
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+    # handle webhook body
+    handler.handle(body, signature)
 
-    context: object, required
-        Lambda Context runtime methods and attributes
+    return {"statusCode": 200, "body": "OK"}
 
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
 
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
+@handler.add(MessageEvent, message=TextMessage)
+def handle_text_message(event):
+    """ TextMessage handler """
+    input_text = event.message.text
 
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
-        }),
-    }
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=input_text))
