@@ -15,7 +15,9 @@ lint = true
 
 [default.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
-confirm_changeset = true
+# github actions 上で聞かれると止まってしまうため
+confirm_changeset = false
+fail_on_empty_changeset = false
 s3_bucket = "egonote"
 s3_prefix = "egonote-api"
 region = "ap-northeast-1"
