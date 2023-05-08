@@ -56,7 +56,7 @@ Resources:
         NotifyLine:
           Type: Schedule
           Properties:
-            Schedule: cron(0 0 * * ? *) # 日本時間AM9時に毎日通知する
+            Schedule: cron(0 10 * * ? *) # 日本時間19時(退勤時間)に毎日通知する
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
