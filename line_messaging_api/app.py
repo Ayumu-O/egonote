@@ -1,4 +1,5 @@
 import os
+import random
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -28,7 +29,25 @@ def lambda_handler(event, context):
 def handle_text_message(event):
     """ TextMessage handler """
     input_text = event.message.text
+    # reply_message = input_text
+
+    reply_message = ''
+    if input_text == '例':
+        reply_message = get_example()
+    else:
+        reply_messages = [
+            'すごいですね！',
+            'よかったですね！',
+            'がんばりましたね！',
+            'その調子です！',
+        ]
+        reply_message = reply_messages[
+            random.randint(0, len(reply_messages) - 1)
+        ]
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=input_text))
+        TextSendMessage(text=reply_message))
+
+def get_example():
+    return 'これは例です'
