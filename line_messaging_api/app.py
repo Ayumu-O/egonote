@@ -5,8 +5,52 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    CarouselColumn,
+    CarouselTemplate,
+    MessageEvent,
+    MessageTemplateAction,
+    TemplateSendMessage,
+    TextMessage,
+    TextSendMessage,
 )
+
+EXAMPLES = [
+    {
+        'category': 'スッキリしたこと',
+        'examples': [
+            "机の上をきれいに片付けた",
+            "たまっていた雑務を処理した",
+            "顧客のクレームを解決した",
+            "パソコン内のフォルダを整理した",
+            "英単語帳を1冊終えた",
+            "プログラムのバグをなくすことができた",
+        ]
+    },
+    {
+        'category': 'ワクワクしたこと',
+        'examples': [
+            "電話の対応が上手にできた",
+            "会いたいと思っていた人に会えた",
+            "レポートがうまく書けた",
+            "家計簿の計算が一発でぴったり合った",
+            "英会話でいつもよりうまく話せた",
+            "新しいプロジェクトをスムーズにスタートできた",
+        ]
+    },
+    {
+        'category': 'ハツラツとしたこと',
+        'examples': [
+            "駅でエスクレーターではなく階段を使った",
+            "朝に3キロ走った",
+            "1日中子供とサッカーをした",
+            "ヘルシーなお弁当を作った",
+            "いつもより野菜を多く食べた",
+            "いつも食べていない朝食を食べて出かけた",
+            "先輩に悩みを相談し、本音を話せた",
+            "有休を取って、ゆっくりできた",
+        ]
+    },
+]
 
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
@@ -31,9 +75,9 @@ def handle_text_message(event):
     input_text = event.message.text
     # reply_message = input_text
 
-    reply_message = ''
+    reply = None
     if input_text == '例':
-        reply_message = get_example()
+        reply = get_example_message()
     else:
         reply_messages = [
             'すごいですね！',
@@ -44,41 +88,38 @@ def handle_text_message(event):
         reply_message = reply_messages[
             random.randint(0, len(reply_messages) - 1)
         ]
+        reply = TextSendMessage(text=reply_message)
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=reply_message))
+        reply
+    )
 
-def get_example():
-    return '''
-「できたこと」の例はこちらです！
+def get_example_message():
+    columns = [
+        CarouselColumn(
+            # thumbnail_image_url=column['thumbnail_image_url'],
+            title=column['category'],
+            text=column['category'],
+            actions=[
+                MessageTemplateAction(
+                    label='例を見る',
+                    text='\n'.join(column['examples']),
+                )
+            ]
+        )
+        for column in EXAMPLES
+    ]
 
-スッキリしたこと
-- 机の上をきれいに片付けた
-- たまっていた雑務を処理した
-- 顧客のクレームを解決した
-- パソコン内のフォルダを整理した
-- 英単語帳を1冊終えた
-- プログラムのバグをなくすことができた
+    messages = TemplateSendMessage(
+        alt_text='template',
+        template=CarouselTemplate(columns=columns),
+    )
 
-ワクワクしたこと
-- 電話の対応が上手にできた
-- 会いたいと思っていた人に会えた
-- レポートがうまく書けた
-- 家計簿の計算が一発でぴったり合った
-- 英会話でいつもよりうまく話せた
-- 新しいプロジェクトをスムーズにスタートできた
+    return messages
 
-ハツラツとしたこと
-- 駅でエスクレーターではなく階段を使った
-- 朝に3キロ走った
-- 1日中子供とサッカーをした
-- ヘルシーなお弁当を作った
-- いつもより野菜を多く食べた
-- いつも食べていない朝食を食べて出かけた
-- 先輩に悩みを相談し、本音を話せた
-- 有休を取って、ゆっくりできた
 
+'''
 時間に関するできたこと
 - 旅行の1週間前に準備が終わった
 - 納期通り商品を出荷できた
