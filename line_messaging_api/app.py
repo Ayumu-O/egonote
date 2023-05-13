@@ -8,6 +8,7 @@ from linebot.models import (
     CarouselColumn,
     CarouselTemplate,
     MessageEvent,
+    PostbackEvent,
     PostbackTemplateAction,
     TemplateSendMessage,
     TextMessage,
@@ -82,7 +83,7 @@ def handle_text_message(event):
 
     reply = None
     if input_text == '例':
-        reply = get_example_message()
+        reply = get_example_carousels()
     else:
         reply_messages = [
             'すごいですね！',
@@ -100,15 +101,35 @@ def handle_text_message(event):
         reply
     )
 
-def get_example_message():
+
+@handler.add(PostbackEvent)
+def handle_post_back(event):
+    """PostbackEvent handler"""
+    logger.info({'event': event})
+    input_data = event.postback.data
+
+    key, value = input_data.split("=")
+    message = None
+    if key == "example_category":
+        for exam in EXAMPLES:
+            category = exam['category']
+            if value == category:
+                examples_txt = '\n'.join(
+                    list(map(lambda x: f'・ {x}', exam['examples']))
+                )
+                txt = f'{category}の例はこちらです！\n{examples_txt}'
+                message = TextSendMessage(text=txt)
+                break
+        line_bot_api.reply_message(
+            event.reply_token,
+            message
+        )
+
+
+def get_example_carousels():
     columns = []
     for column in EXAMPLES:
-        examples_txt = '\n'.join(
-            list(map(lambda x: f'・ {x}', column['examples']))
-        )
         category = column['category']
-        txt = f'{category}の例はこちらです！\n{examples_txt}'
-
         carousel = CarouselColumn(
             # thumbnail_image_url=column['thumbnail_image_url'],
             title=column['category'],
@@ -116,7 +137,7 @@ def get_example_message():
             actions=[
                 PostbackTemplateAction(
                     label='例を見る',
-                    data=txt,
+                    data=f'example_category={category}',
                 )
             ]
         )
@@ -127,7 +148,6 @@ def get_example_message():
         template=CarouselTemplate(columns=columns),
     )
 
-    logger.debug({'messages': messages})
     return messages
 
 
