@@ -32,7 +32,7 @@ Resources:
     Dependson: ApiHandlerLogGroup
     Properties:
       FunctionName:
-        !FindInMap [SystemTypeMap, !Ref SystemType, ApiHandlerLambdaName]
+        !FindInMap [SystemTypeMap, !Ref SystemTypeMap, ApiHandlerLambdaName]
       CodeUri: line_messaging_api/
       Handler: app.lambda_handler
       Runtime: python3.9
