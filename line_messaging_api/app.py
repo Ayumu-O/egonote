@@ -99,7 +99,7 @@ def get_example_message():
     columns = []
     for column in EXAMPLES:
         examples_txt = '\n'.join(
-            list(column['examples'].apply(lambda x: f'・ {x}'))
+            list(map(lambda x: f'・ {x}', column['examples']))
         )
         category = column['category']
         txt = f'{category}の例はこちらです！\n{examples_txt}'
