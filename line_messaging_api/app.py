@@ -14,6 +14,9 @@ from linebot.models import (
     TextSendMessage,
 )
 
+from logging import getLogger
+logger = getLogger(__name__)
+
 EXAMPLES = [
     {
         'category': 'スッキリしたこと',
@@ -72,6 +75,7 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
+    logger.info({'event': event})
     input_text = event.message.text
     # reply_message = input_text
 
@@ -122,6 +126,7 @@ def get_example_message():
         template=CarouselTemplate(columns=columns),
     )
 
+    logger.debug({'messages': messages})
     return messages
 
 
