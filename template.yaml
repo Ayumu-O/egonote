@@ -18,6 +18,11 @@ Parameters:
   LineChannelSecret:
     Type: String
     Default: fuga
+  SystemType:
+    Type: String
+    AllowedValues:
+      - general
+    Default: general
 
 # Lambda 関数名の Mapping 定義は以下も参照
 # https://qiita.com/gotousua/items/48efb57cebef6d46f2ba#%E3%83%9E%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0--mappings-
@@ -32,7 +37,7 @@ Resources:
     Dependson: ApiHandlerLogGroup
     Properties:
       FunctionName:
-        !FindInMap [SystemTypeMap, !Ref SystemTypeMap, ApiHandlerLambdaName]
+        !FindInMap [SystemTypeMap, !Ref SystemType, ApiHandlerLambdaName]
       CodeUri: line_messaging_api/
       Handler: app.lambda_handler
       Runtime: python3.9
