@@ -8,7 +8,7 @@ from linebot.models import (
     CarouselColumn,
     CarouselTemplate,
     MessageEvent,
-    MessageTemplateAction,
+    PostbackTemplateAction,
     TemplateSendMessage,
     TextMessage,
     TextSendMessage,
@@ -96,20 +96,26 @@ def handle_text_message(event):
     )
 
 def get_example_message():
-    columns = [
-        CarouselColumn(
+    columns = []
+    for column in EXAMPLES:
+        examples_txt = '\n'.join(
+            list(column['examples'].apply(lambda x: f'・ {x}'))
+        )
+        category = column['category']
+        txt = f'{category}の例はこちらです！\n{examples_txt}'
+
+        carousel = CarouselColumn(
             # thumbnail_image_url=column['thumbnail_image_url'],
             title=column['category'],
             text=column['category'],
             actions=[
-                MessageTemplateAction(
+                PostbackTemplateAction(
                     label='例を見る',
-                    text='\n'.join(column['examples']),
+                    data=txt,
                 )
             ]
         )
-        for column in EXAMPLES
-    ]
+        columns.append(carousel)
 
     messages = TemplateSendMessage(
         alt_text='template',
