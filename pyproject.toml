@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "egoist-note"
+version = "0.1.0"
+description = ""
+authors = ["Ayumu-O"]
+readme = "README.md"
+packages = [{include = "egoist_note"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+line-bot-sdk = "^2.4.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
