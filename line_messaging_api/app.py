@@ -44,17 +44,16 @@ class FormatterJSON(logging.Formatter):
 
         return json.dumps(j, ensure_ascii=False)
 
-logger = logging.getLogger(__name__)
-logger.setLevel("DEBUG")
-
+logging.basicConfig()
 formatter = FormatterJSON(
     '[%(levelname)s]\t%(asctime)s.%(msecs)dZ\t%(levelno)s\t%(message)s\n',
     '%Y-%m-%dT%H:%M:%S'
 )
-
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(formatter)
-logger.addHandler(log_handler)
+# ローカル環境ではStreamHandlerが、AWS Lambdaでは元々存在しているLambdaHandlerがハンドラとしてセットされる
+# https://ops.jig-saw.com/tech-cate/lambda-python-log
+logging.getLogger().handlers[0].setFormatter(formatter)
+logger = logging.getLogger(__name__)
+logger.setLevel("DEBUG")
 
 EXAMPLES = [
     {
@@ -92,6 +91,17 @@ EXAMPLES = [
             "有休を取って、ゆっくりできた",
         ]
     },
+    {
+        'category': '時間に関するできたこと',
+        'examples': [
+            '旅行の1週間前に準備が終わった',
+            '納期通り商品を出荷できた',
+            '初めてアポイントが取れた',
+            'いつもより30分早く会社に着いた',
+            '3分ぴったりでスピーチが終わった',
+            '1年ぶりに友達に会えた',
+        ]
+    }
 ]
 
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
@@ -114,7 +124,7 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info({'event': event})
+    logger.info('Received text message', extra=json.dumps(event))
     input_text = event.message.text
     # reply_message = input_text
 
@@ -142,7 +152,7 @@ def handle_text_message(event):
 @handler.add(PostbackEvent)
 def handle_post_back(event):
     """PostbackEvent handler"""
-    logger.info({'event': event})
+    logger.info('Recieved postback event', extra=json.dumps(event))
     input_data = event.postback.data
 
     key, value = input_data.split("=")
@@ -175,10 +185,10 @@ def get_example_carousels():
             title=category,
             text=examples_txt,
             actions=[
-                # PostbackTemplateAction(
-                #     label='例を見る',
-                #     data=f'example_category={category}',
-                # )
+                PostbackTemplateAction(
+                    label='例を見る',
+                    data=f'example_category={category}',
+                )
             ]
         )
         columns.append(carousel)
