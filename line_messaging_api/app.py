@@ -218,13 +218,13 @@ def get_example_carousels():
     columns = []
     for column in EXAMPLES:
         category = column['category']
-        examples_txt = '\n'.join(
-            list(map(lambda x: f'・ {x}', column['examples']))
-        )
+        # examples_txt = '\n'.join(
+        #     list(map(lambda x: f'・ {x}', column['examples']))
+        # )
         carousel = CarouselColumn(
             # thumbnail_image_url=column['thumbnail_image_url'],
             title=category,
-            text=examples_txt,
+            text=category,
             actions=[
                 PostbackTemplateAction(
                     label='例を見る',
