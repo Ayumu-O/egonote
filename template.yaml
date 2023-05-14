@@ -30,6 +30,7 @@ Mappings:
   SystemTypeMap:
     general:
       ApiHandlerLambdaName: egoist-note-api-handler
+      PythonRuntime: python3.9
 
 Resources:
   ApiHandlerFunction:
@@ -40,7 +41,7 @@ Resources:
         !FindInMap [SystemTypeMap, !Ref SystemType, ApiHandlerLambdaName]
       CodeUri: line_messaging_api/
       Handler: app.lambda_handler
-      Runtime: python3.9
+      Runtime: !FindInMap [SystemTypeMap, !Ref SystemType, PythonRuntime]
       Architectures:
         - x86_64
       Environment:
@@ -54,6 +55,18 @@ Resources:
           Properties:
             Path: /api_endpoint
             Method: post
+      Layers:
+        - !Ref ApiHandlerLayer
+
+  ApiHandlerLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Layer for ApiHandlerFunction
+      ContentUri: line_messaging_api_layer/
+      CompatibleRuntimes:
+        - !FindInMap [SystemTypeMap, !Ref SystemType, PythonRuntime]
+    Metadata:
+      BuildMethod: !FindInMap [SystemTypeMap, !Ref SystemType, PythonRuntime]
 
   # api-handler 関数用のロググループ
   ApiHandlerLogGroup:
