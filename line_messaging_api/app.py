@@ -81,7 +81,7 @@ EXAMPLES = [
     {
         'category': 'ハツラツとしたこと',
         'examples': [
-            "駅でエスクレーターではなく階段を使った",
+            "駅でエスカレーターではなく階段を使った",
             "朝に3キロ走った",
             "1日中子供とサッカーをした",
             "ヘルシーなお弁当を作った",
@@ -100,6 +100,14 @@ EXAMPLES = [
             'いつもより30分早く会社に着いた',
             '3分ぴったりでスピーチが終わった',
             '1年ぶりに友達に会えた',
+        ]
+    },
+    {
+        'category': '数値に関するできたこと',
+        'examples': [
+            'リスニングの点数が10点上がった',
+            '商談をいつもより３件多くこなした',
+            'いつもより10ページ多く本を読んだ',
         ]
     }
 ]
@@ -124,7 +132,7 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info('Received text message', extra=json.dumps(event))
+    logger.info('Received text message', extra=event)
     input_text = event.message.text
     # reply_message = input_text
 
@@ -152,7 +160,7 @@ def handle_text_message(event):
 @handler.add(PostbackEvent)
 def handle_post_back(event):
     """PostbackEvent handler"""
-    logger.info('Recieved postback event', extra=json.dumps(event))
+    logger.info('Recieved postback event', extra=event)
     input_data = event.postback.data
 
     key, value = input_data.split("=")
@@ -202,18 +210,7 @@ def get_example_carousels():
 
 
 '''
-時間に関するできたこと
-- 旅行の1週間前に準備が終わった
-- 納期通り商品を出荷できた
-- 初めてアポイントが取れた
-- いつもより30分早く会社に着いた
-- 3分ぴったりでスピーチが終わった
-- 1年ぶりに友達に会えた
 
-数値に関するできたこと
-- リスニングの点数が10点上がった
-- 商談をいつもより３件多くこなした
-- いつもより10ページ多く本を読んだ
 
 習慣化に関するできたこと
 - 通勤時に英語のリスニング教材を1ヶ月間聴き続けた
