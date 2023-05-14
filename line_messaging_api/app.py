@@ -171,7 +171,10 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info('Received text message', extra=vars(event))
+    logger.info(
+        'Received text message',
+        extra={'event': vars(event)}
+    )
     input_text = event.message.text
     # reply_message = input_text
 
