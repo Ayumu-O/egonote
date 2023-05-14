@@ -126,6 +126,22 @@ EXAMPLES = [
             '宴会の感じを引き受けたら感謝された',
             '議事録を取っておいたら先輩に「ありがとう」と言ってもらえた',
         ]
+    },
+    {
+        'category': '人に喜んでもらえたこと',
+        'examples': [
+            '他愛無い話で友達が笑ってくれた',
+            '同期の服装を褒めたら笑顔になった',
+            'プレゼントを贈ったら喜んでもらえた',
+        ]
+    },
+    {
+        'category': '人にしてもらえたこと',
+        'examples': [
+            '商談の終わりに、相手に握手を求められた',
+            '真剣に話を聞いたら、友達がランチを奢ってくれた',
+            '相手の要望に近い価格を提示したら、玄関まで送ってもらえた',
+        ]
     }
 ]
 
@@ -149,7 +165,10 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info('Received text message', extra=vars(event))
+    logger.info(
+        'Received text message',
+        extra={'event': vars(event)}
+    )
     input_text = event.message.text
     # reply_message = input_text
 
@@ -224,16 +243,3 @@ def get_example_carousels():
     )
 
     return messages
-
-
-'''
-人に喜んでもらえたこと
-- 他愛無い話で友達が笑ってくれた
-- 同期の服装を褒めたら笑顔になった
-- プレゼントを贈ったら喜んでもらえた
-
-人にしてもらえたこと
-- 商談の終わりに、相手に握手を求められた
-- 真剣に話を聞いたら、友達がランチを奢ってくれた
-- 相手の要望に近い価格を提示したら、玄関まで送ってもらえた
-'''
