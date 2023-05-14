@@ -19,39 +19,39 @@ import json
 import logging
 import traceback
 
-class FormatterJSON(logging.Formatter):
-    def format(self, record):
-        if self.usesTime():
-            record.asctime = self.formatTime(record, self.datefmt)
-        j = {
-            'logLevel': record.levelname,
-            'timestamp': '%(asctime)s.%(msecs)dZ' % dict(asctime=record.asctime, msecs=record.msecs),
-            'timestamp_epoch': record.created,
-            'aws_request_id': getattr(record, 'aws_request_id', '00000000-0000-0000-0000-000000000000'),
-            'message': record.getMessage(),
-            'module': record.module,
-            'filename': record.filename,
-            'funcName': record.funcName,
-            'levelno': record.levelno,
-            'lineno': record.lineno,
-            'traceback': {},
-            'extra_data': record.__dict__.get('extra_data', {}),
-            'event': record.__dict__.get('event', {}),
-        }
-        if record.exc_info:
-            exception_data = traceback.format_exc().splitlines()
-            j['traceback'] = exception_data
-        print(j)
-        return json.dumps(j, ensure_ascii=False)
+# class FormatterJSON(logging.Formatter):
+#     def format(self, record):
+#         if self.usesTime():
+#             record.asctime = self.formatTime(record, self.datefmt)
+#         j = {
+#             'logLevel': record.levelname,
+#             'timestamp': '%(asctime)s.%(msecs)dZ' % dict(asctime=record.asctime, msecs=record.msecs),
+#             'timestamp_epoch': record.created,
+#             'aws_request_id': getattr(record, 'aws_request_id', '00000000-0000-0000-0000-000000000000'),
+#             'message': record.getMessage(),
+#             'module': record.module,
+#             'filename': record.filename,
+#             'funcName': record.funcName,
+#             'levelno': record.levelno,
+#             'lineno': record.lineno,
+#             'traceback': {},
+#             'extra_data': record.__dict__.get('extra_data', {}),
+#             'event': record.__dict__.get('event', {}),
+#         }
+#         if record.exc_info:
+#             exception_data = traceback.format_exc().splitlines()
+#             j['traceback'] = exception_data
+#         print(j)
+#         return json.dumps(j, ensure_ascii=False)
 
-logging.basicConfig()
-formatter = FormatterJSON(
-    '[%(levelname)s]\t%(asctime)s.%(msecs)dZ\t%(levelno)s\t%(message)s\n',
-    '%Y-%m-%dT%H:%M:%S'
-)
-# ローカル環境ではStreamHandlerが、AWS Lambdaでは元々存在しているLambdaHandlerがハンドラとしてセットされる
-# https://ops.jig-saw.com/tech-cate/lambda-python-log
-logging.getLogger().handlers[0].setFormatter(formatter)
+# logging.basicConfig()
+# formatter = FormatterJSON(
+#     '[%(levelname)s]\t%(asctime)s.%(msecs)dZ\t%(levelno)s\t%(message)s\n',
+#     '%Y-%m-%dT%H:%M:%S'
+# )
+# # ローカル環境ではStreamHandlerが、AWS Lambdaでは元々存在しているLambdaHandlerがハンドラとしてセットされる
+# # https://ops.jig-saw.com/tech-cate/lambda-python-log
+# logging.getLogger().handlers[0].setFormatter(formatter)
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
 
@@ -165,10 +165,7 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info(
-        'Received text message',
-        extra={'event': vars(event)}
-    )
+    logger.info({'event': vars(event)})
     input_text = event.message.text
     # reply_message = input_text
 
@@ -196,7 +193,7 @@ def handle_text_message(event):
 @handler.add(PostbackEvent)
 def handle_post_back(event):
     """PostbackEvent handler"""
-    logger.info('Recieved postback event', extra=event)
+    logger.info({'event': vars(event)})
     input_data = event.postback.data
 
     key, value = input_data.split("=")
