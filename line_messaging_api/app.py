@@ -48,6 +48,7 @@ import traceback
 class JsonFormatter:
     def format(self, record):
         print(record)
+        # return json.dumps(vars(record))
         return json.dumps(vars(record))
 
 logging.basicConfig()
