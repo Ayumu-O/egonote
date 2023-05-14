@@ -109,6 +109,23 @@ EXAMPLES = [
             '商談をいつもより３件多くこなした',
             'いつもより10ページ多く本を読んだ',
         ]
+    },
+    {
+        'category': '習慣化に関するできたこと',
+        'examples': [
+            '通勤時に英語のリスニング教材を1ヶ月間聴き続けた',
+            '毎朝ランニングを3週間続けた',
+            '新聞を2ヶ月間、毎朝欠かさずに読んだ',
+        ]
+    },
+    {
+        'category': '人に感謝されたこと',
+        'examples': [
+            '読んで面白かった本の話をしたら、後輩にお礼を言われた',
+            '共有の場所をさっと掃除しておいたら、みんさんに感謝された',
+            '宴会の感じを引き受けたら感謝された',
+            '議事録を取っておいたら先輩に「ありがとう」と言ってもらえた',
+        ]
     }
 ]
 
@@ -132,7 +149,7 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info('Received text message', extra=event)
+    logger.info('Received text message', extra=vars(event))
     input_text = event.message.text
     # reply_message = input_text
 
@@ -210,19 +227,6 @@ def get_example_carousels():
 
 
 '''
-
-
-習慣化に関するできたこと
-- 通勤時に英語のリスニング教材を1ヶ月間聴き続けた
-- 毎朝ランニングを3週間続けた
-- 新聞を2ヶ月間、毎朝欠かさずに読んだ
-
-人に感謝されたこと
-- 読んで面白かった本の話をしたら、後輩にお礼を言われた
-- 共有の場所をさっと掃除しておいたら、みんさんに感謝された
-- 宴会の感じを引き受けたら感謝された
-- 議事録を取っておいたら先輩に「ありがとう」と言ってもらえた
-
 人に喜んでもらえたこと
 - 他愛無い話で友達が笑ってくれた
 - 同期の服装を褒めたら笑顔になった
