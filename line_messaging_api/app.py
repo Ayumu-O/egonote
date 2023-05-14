@@ -45,11 +45,11 @@ import traceback
 #         print(j)
 #         return json.dumps(j, ensure_ascii=False)
 
-class JsonFormatter:
-    def format(self, record):
-        print(record)
-        # return json.dumps(vars(record))
-        return json.dumps(vars(record))
+# class JsonFormatter:
+#     def format(self, record):
+#         print(record)
+#         # return json.dumps(vars(record))
+#         return json.dumps(vars(record))
 
 logging.basicConfig()
 # formatter = FormatterJSON(
@@ -58,7 +58,7 @@ logging.basicConfig()
 # )
 # ローカル環境ではStreamHandlerが、AWS Lambdaでは元々存在しているLambdaHandlerがハンドラとしてセットされる
 # https://ops.jig-saw.com/tech-cate/lambda-python-log
-logging.getLogger().handlers[0].setFormatter(JsonFormatter())
+# logging.getLogger().handlers[0].setFormatter(JsonFormatter())
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
 
@@ -172,10 +172,9 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info(
-        'Received text message',
-        extra={'event': vars(event)}
-    )
+    logger.info(event)
+    logger.info(type(event))
+
     input_text = event.message.text
     # reply_message = input_text
 
