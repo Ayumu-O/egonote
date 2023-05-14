@@ -15,9 +15,44 @@ from linebot.models import (
     TextSendMessage,
 )
 
-from logging import getLogger
-logger = getLogger(__name__)
+import json
+import logging
+import traceback
+
+class FormatterJSON(logging.Formatter):
+    def format(self, record):
+        if self.usesTime():
+            record.asctime = self.formatTime(record, self.datefmt)
+        j = {
+            'logLevel': record.levelname,
+            'timestamp': '%(asctime)s.%(msecs)dZ' % dict(asctime=record.asctime, msecs=record.msecs),
+            'timestamp_epoch': record.created,
+            'aws_request_id': getattr(record, 'aws_request_id', '00000000-0000-0000-0000-000000000000'),
+            'message': record.getMessage(),
+            'module': record.module,
+            'filename': record.filename,
+            'funcName': record.funcName,
+            'levelno': record.levelno,
+            'lineno': record.lineno,
+            'traceback': {},
+            'extra_data': record.__dict__.get('extra_data', {}),
+            'event': record.__dict__.get('event', {}),
+        }
+        if record.exc_info:
+            exception_data = traceback.format_exc().splitlines()
+            j['traceback'] = exception_data
+
+        return json.dumps(j, ensure_ascii=False)
+
+logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
+
+formatter = FormatterJSON(
+    '[%(levelname)s]\t%(asctime)s.%(msecs)dZ\t%(levelno)s\t%(message)s\n',
+    '%Y-%m-%dT%H:%M:%S'
+)
+# Replace the LambdaLoggerHandler formatter :
+logger.handlers[0].setFormatter(formatter)
 
 EXAMPLES = [
     {
