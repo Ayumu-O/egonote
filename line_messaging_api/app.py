@@ -1,3 +1,4 @@
+# --- coding: utf-8 ---
 import os
 import random
 
@@ -44,14 +45,19 @@ import traceback
 #         print(j)
 #         return json.dumps(j, ensure_ascii=False)
 
-# logging.basicConfig()
+class JsonFormatter:
+    def format(self, record):
+        print(record)
+        return json.dumps(vars(record))
+
+logging.basicConfig()
 # formatter = FormatterJSON(
 #     '[%(levelname)s]\t%(asctime)s.%(msecs)dZ\t%(levelno)s\t%(message)s\n',
 #     '%Y-%m-%dT%H:%M:%S'
 # )
-# # ローカル環境ではStreamHandlerが、AWS Lambdaでは元々存在しているLambdaHandlerがハンドラとしてセットされる
-# # https://ops.jig-saw.com/tech-cate/lambda-python-log
-# logging.getLogger().handlers[0].setFormatter(formatter)
+# ローカル環境ではStreamHandlerが、AWS Lambdaでは元々存在しているLambdaHandlerがハンドラとしてセットされる
+# https://ops.jig-saw.com/tech-cate/lambda-python-log
+logging.getLogger().handlers[0].setFormatter(JsonFormatter())
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
 
@@ -165,7 +171,7 @@ def lambda_handler(event, context):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     """ TextMessage handler """
-    logger.info({'event': vars(event)})
+    logger.info('Received text message', extra=event)
     input_text = event.message.text
     # reply_message = input_text
 
