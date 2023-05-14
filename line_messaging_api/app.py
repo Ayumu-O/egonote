@@ -51,8 +51,10 @@ formatter = FormatterJSON(
     '[%(levelname)s]\t%(asctime)s.%(msecs)dZ\t%(levelno)s\t%(message)s\n',
     '%Y-%m-%dT%H:%M:%S'
 )
-# Replace the LambdaLoggerHandler formatter :
-logger.handlers[0].setFormatter(formatter)
+
+log_handler = logging.StreamHandler()
+log_handler.setFormatter(formatter)
+logger.addHandler(log_handler)
 
 EXAMPLES = [
     {
@@ -165,15 +167,18 @@ def get_example_carousels():
     columns = []
     for column in EXAMPLES:
         category = column['category']
+        examples_txt = '\n'.join(
+            list(map(lambda x: f'・ {x}', column['examples']))
+        )
         carousel = CarouselColumn(
             # thumbnail_image_url=column['thumbnail_image_url'],
-            title=column['category'],
-            text=column['category'],
+            title=category,
+            text=examples_txt,
             actions=[
-                PostbackTemplateAction(
-                    label='例を見る',
-                    data=f'example_category={category}',
-                )
+                # PostbackTemplateAction(
+                #     label='例を見る',
+                #     data=f'example_category={category}',
+                # )
             ]
         )
         columns.append(carousel)
